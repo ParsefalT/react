@@ -15,5 +15,5 @@ router.route("/").post(authenticate, authorizeAdmin, createGenre);
 router.route("/:id").put(authenticate, authorizeAdmin, updateGenre);
 router.route("/:id").delete(authenticate, authorizeAdmin, deleteGenre);
 router.route("/:id").get(readGenre);
-router.route("/genres").get(getGenre);
+router.route("/").get(getGenre);
 export default router;

@@ -15,6 +15,8 @@ import Login from "./pages/Auth/Login.tsx";
 import Register from "./pages/Auth/Register.tsx";
 import PrivateRoute from "./pages/Auth/PrivateRoute.tsx";
 import Profile from "./pages/User/Profile.tsx";
+import AdminRoute from "./pages/Admin/AdminRoute.tsx";
+import GenreList from "./pages/Admin/GenreList.tsx";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -24,6 +26,10 @@ const router = createBrowserRouter(
 			<Route path="/register" element={<Register />} />
 			<Route path="" element={<PrivateRoute />}>
 				<Route path="/profile" element={<Profile />} />
+			</Route>
+
+			<Route path="" element={<AdminRoute />}>
+				<Route path="/admin/movies/genre" element={<GenreList />} />
 			</Route>
 		</Route>
 	)

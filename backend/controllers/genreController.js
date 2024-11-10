@@ -16,7 +16,7 @@ const createGenre = asyncHandler(async (req, res) => {
 		}
 
 		const genre = await new Genre({ name }).save();
-		res.status(406).json(genre);
+		res.status(200).json(genre);
 	} catch (error) {
 		console.log(error);
 		return res.this.status(500).json(error);
@@ -61,10 +61,11 @@ const deleteGenre = asyncHandler(async (req, res) => {
 const getGenre = asyncHandler(async (req, res) => {
 	try {
 		// const {id} = req.params
-		const genre = await Genre.find();
+		const genre = await Genre.find({});
 		if (!genre) {
 			return res.status(404).json({ error: "not found" });
 		}
+
 
 		res.send(genre);
 	} catch (error) {

@@ -85,7 +85,7 @@ const Navigation = () => {
 
                     {dropDownOpen && userInfo && (
                         <ul
-                            className={`absolute right-0 top-[-88px] mr-14 w-[10rem] space-y-2 bg-black text-gray-600 ${
+                            className={`absolute right-0 top-[-182px] mr-14 w-[10rem] space-y-2 bg-black text-gray-600 ${
                                 !userInfo.isAdmin ? "-top-20" : "-top-24"
                             }`}
                         >
@@ -107,6 +107,14 @@ const Navigation = () => {
                                     className="block px-4 py-2 hover:bg-gray-300"
                                 >
                                     Profile
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/admin/movies/genre"
+                                    className="block px-4 py-2 hover:bg-gray-300"
+                                >
+                                    Genres
                                 </Link>
                             </li>
                             <li>
