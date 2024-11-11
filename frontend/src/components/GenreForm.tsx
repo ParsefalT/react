@@ -4,8 +4,8 @@ const GenreForm: React.FC<{
 	value: string;
 	setValue: (arg: string) => void;
 	handleSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
-	handleDelete: () => void;
-	buttonText: string;
+	handleDelete?: () => void;
+	buttonText?: string;
 }> = ({
 	value = "",
 	setValue,

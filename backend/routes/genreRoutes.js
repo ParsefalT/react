@@ -14,6 +14,6 @@ import {
 router.route("/").post(authenticate, authorizeAdmin, createGenre);
 router.route("/:id").put(authenticate, authorizeAdmin, updateGenre);
 router.route("/:id").delete(authenticate, authorizeAdmin, deleteGenre);
-router.route("/:id").get(readGenre);
+router.route("/:id").get(authenticate, authorizeAdmin, readGenre);
 router.route("/").get(getGenre);
 export default router;

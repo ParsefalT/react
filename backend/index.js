@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import genreRoutes from "./routes/genreRoutes.js";
+import moviesRoutes from "./routes/moviesRoutes.js";
+
 
 dotenv.config();
 connectDB();
@@ -18,6 +20,7 @@ app.use(cookieParser());
 // Routes
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/genre", genreRoutes);
+app.use("/api/v1/movies", moviesRoutes);
 
 const PORT = process.env.PORT || 5555;
 
