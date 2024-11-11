@@ -99,6 +99,63 @@ const deleteMovie = async (req, res) => {
 	}
 };
 
+const deleteComment = async (req, res) => {
+	try {
+		const { movieId, reviewId } = req.body;
+		const movie = await Movie.findById(movieId);
+
+		if (!movie) {
+			return res.status(404).json({ error: "not found movie" });
+		}
+		const reviewIndex = movie.reviews.findIndex(
+			(r) => r._id.toString() == reviewId
+		);
+		if (reviewIndex == -1) {
+			return res.status(404).json({ error: "not found" });
+		}
+
+		movie.reviews.splice(reviewIndex, 1);
+
+		movie.numReviews = movie.reviews.length;
+		movie.rating =
+			movie.reviews.length > 0
+				? movie.reviews.reduce((acc, item) => item.rating + acc, 0) /
+				  movie.reviews.length
+				: 0;
+
+		await movie.save();
+		res.status(201).json({ msg: "comment deleted" });
+	} catch (error) {
+		res.status(500).json({ msg: "error server" });
+	}
+};
+const getNewMovies = async (req, res) => {
+	try {
+		const newMovies = await Movie.find().sort({ createdAt: -1 }).limit(10);
+		res.status(200).json(newMovies);
+	} catch (error) {
+		res.status(500).json({ msg: "error server" });
+	}
+};
+
+const getTopMovies = async (req, res) => {
+	try {
+		const topMovies = await Movie.find().sort({ numReviews: -1 }).limit(10);
+		res.status(200).json(topMovies);
+	} catch (error) {
+		res.status(500).json({ msg: "error server" });
+	}
+};
+
+const getRandomMovies = async (req, res) => {
+	try {
+		const randomMovies = await Movie.aggregate([{ $sample: { size: 10 } }]);
+		res.status(200).json(randomMovies);
+	} catch (error) {
+		res.status(500).json({ msg: "error server" });
+	}
+};
+
 export {
 	getAllMovies,
 	createMovie,
@@ -106,4 +163,8 @@ export {
 	updateMovie,
 	movieReview,
 	deleteMovie,
+	deleteComment,
+	getNewMovies,
+	getTopMovies,
+	getRandomMovies,
 };

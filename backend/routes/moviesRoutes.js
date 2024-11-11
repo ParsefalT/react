@@ -7,17 +7,26 @@ import {
 	getMovie,
 	updateMovie,
 	movieReview,
-    deleteMovie
+    deleteMovie,
+	deleteComment,
+	getNewMovies,
+	getTopMovies,
+	getRandomMovies
 } from "../controllers/movieController.js";
 
 const router = express.Router();
 
 router.get("/all-movies", getAllMovies);
 router.get("/specific-movie/:id", getMovie);
+router.get("/new-movies", getNewMovies)
+router.get("/tom-movies", getTopMovies)
+router.get("/random-movies", getRandomMovies)
+
 
 router.post("/create-movie", authenticate, authorizeAdmin, createMovie);
 router.put("/update-movie/:id", authenticate, authorizeAdmin, updateMovie);
 router.delete("/delete-movie/:id", authenticate, authorizeAdmin, deleteMovie);
+router.delete('/delete-comment',deleteComment)
 
 router.post("/:id/reviews", authenticate, checkId, movieReview);
 
