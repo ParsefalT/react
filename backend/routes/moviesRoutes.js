@@ -13,6 +13,7 @@ import {
 	getTopMovies,
 	getRandomMovies
 } from "../controllers/movieController.js";
+import path from "path";
 
 const router = express.Router();
 
