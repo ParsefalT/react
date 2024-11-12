@@ -2,7 +2,7 @@ import { apiSlice } from "./apiSlice";
 import BASE_URL from "../constants";
 
 export interface FetchGenresResponse {
-	_id: number;
+	_id: number|string;
 	name: string;
 }
 
