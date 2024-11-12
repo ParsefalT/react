@@ -1,16 +1,15 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import {
-	useCreateMovieMutation,
+	useDeleteMovieMutation,
+	useGetSpecificMovieQuery,
+	useUpdateMovieMutation,
 	useUploadImageMutation,
 } from "../../redux/api/movies";
-import {
-	// FetchGenresResponse,
-	useFetchGenresQuery,
-} from "../../redux/api/genre";
 import { toast } from "react-toastify";
 
-const CreateMovie = () => {
+const UpdateMovie = () => {
+	const { id } = useParams();
 	const navigate = useNavigate();
 	const [movieData, setMovieData] = useState<{
 		name: string;
@@ -31,23 +30,18 @@ const CreateMovie = () => {
 	});
 
 	const [selectedImage, setSelectedImage] = useState<File | null>(null);
-	const [createMovie, { isLoading: isCreatingMovie }] =
-		useCreateMovieMutation();
-
-	const [uploadImage, { isLoading: isUploadImage }] =
-		useUploadImageMutation();
-
-	const { data: genres, isLoading: isLoadingGenres } =
-		useFetchGenresQuery("genres");
+	const { data: initialMovieData } = useGetSpecificMovieQuery(id);
 
 	useEffect(() => {
-		if (genres) {
-			setMovieData((prev) => ({
-				...prev,
-				genre: genres[0]?._id || "",
-			}));
+		if (initialMovieData) {
+			setMovieData(initialMovieData);
 		}
-	}, [genres]);
+	}, [initialMovieData]);
+
+	const [updateMovie] = useUpdateMovieMutation();
+	const [uploadImage] = useUploadImageMutation();
+
+	const [deleteMovie] = useDeleteMovieMutation();
 
 	const handleChange = (
 		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLElement>
@@ -57,20 +51,10 @@ const CreateMovie = () => {
 			event.target instanceof HTMLTextAreaElement
 		) {
 			const { name, value } = event.target;
-			if (name == "genre") {
-				const selectedGenre = genres?.find(
-					(genre) => genre.name == value
-				);
-				setMovieData((prev) => ({
-					...prev,
-					genre: selectedGenre ? selectedGenre._id : "",
-				}));
-			} else {
-				setMovieData((prev) => ({
-					...prev,
-					[name]: value,
-				}));
-			}
+			setMovieData((prev) => ({
+				...prev,
+				[name]: value,
+			}));
 		}
 	};
 
@@ -81,7 +65,7 @@ const CreateMovie = () => {
 		}
 	};
 
-	const handleCreateMovie = async () => {
+	const handleUpdateMovie = async () => {
 		try {
 			if (
 				!movieData.name ||
@@ -97,10 +81,10 @@ const CreateMovie = () => {
 			if (selectedImage) {
 				let uploadImagePath: string | null = null;
 				const formData = new FormData();
-				console.log(selectedImage)
+				console.log(selectedImage);
 				formData.append("image", selectedImage);
 				const uploadImageResponse = await uploadImage(formData);
-				console.log(uploadImageResponse)
+				console.log(uploadImageResponse);
 				if (uploadImageResponse.data) {
 					// eslint-disable-next-line @typescript-eslint/no-unused-vars
 					uploadImagePath = uploadImageResponse.data.images;
@@ -109,9 +93,12 @@ const CreateMovie = () => {
 					toast.error("smt");
 					return;
 				}
-				await createMovie({
-					...movieData,
-					image: uploadImagePath,
+				await updateMovie({
+					id: id,
+					updateMovie: {
+						...movieData,
+						image: uploadImagePath,
+					},
 				});
 				navigate("/movies");
 
@@ -131,8 +118,18 @@ const CreateMovie = () => {
 		}
 	};
 
+	const handleDeleteMovie = async () => {
+		try {
+			await deleteMovie(id);
+			navigate("/movies");
+			toast.success("delete");
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	return (
-		<div className="container m-auto flex mt-4">
+		<div className="container flex justify-center items-center mt-4">
 			<form action="" className="">
 				<p className="text-green-200 w-[50rem] text-2xl mb-4">
 					Create movie
@@ -190,7 +187,7 @@ const CreateMovie = () => {
 						/>
 					</label>
 				</div>
-				<div className="mb-4">
+				{/* <div className="mb-4">
 					<label htmlFor="">
 						Genre
 						<select
@@ -198,7 +195,7 @@ const CreateMovie = () => {
 							id=""
 							defaultValue={movieData.genre}
 							className="border px-2 py-1 w-full"
-							onChange={handleChange}
+							// onChange={handleChange}
 							style={{
 								color: "black",
 							}}
@@ -217,7 +214,7 @@ const CreateMovie = () => {
 							)}
 						</select>
 					</label>
-				</div>
+				</div> */}
 				<div className="mb-4">
 					<label htmlFor="">
 						<input
@@ -236,16 +233,20 @@ const CreateMovie = () => {
 				<button
 					type="button"
 					className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 active:bg-teal-900"
-					disabled={isCreatingMovie || isUploadImage}
-					onClick={handleCreateMovie}
+					onClick={handleUpdateMovie}
 				>
-					{isCreatingMovie || isUploadImage
-						? "Creating..."
-						: "Create movie"}
+					Update
+				</button>
+				<button
+					type="button"
+					className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 active:bg-teal-900"
+					onClick={handleDeleteMovie}
+				>
+					delete
 				</button>
 			</form>
 		</div>
 	);
 };
 
-export default CreateMovie;
+export default UpdateMovie;
